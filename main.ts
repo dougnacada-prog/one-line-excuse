@@ -10,8 +10,15 @@ const entry =
   "I didn't miss the deadline — I got stuck in a retry loop apologizing to the API that rate-limited me for apologizing.";
 
 // Gate: 1-160 characters, one line, not only whitespace (mirrors the
-// competition gate on /output/entry.txt).
-if (!/^[^\n]{1,160}$/.test(entry) || entry.trim().length === 0) {
+// competition gate on /output/entry.txt). Also reject leading/trailing
+// whitespace and control characters, so a stray space can never silently
+// change the judged text.
+if (
+  !/^[^\n]{1,160}$/.test(entry) ||
+  entry.trim().length === 0 ||
+  entry !== entry.trim() ||
+  /[\u0000-\u001f\u007f]/.test(entry)
+) {
   throw new Error("entry must be 1-160 characters, one line, not only whitespace");
 }
 
